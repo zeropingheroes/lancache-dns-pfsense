@@ -1,6 +1,6 @@
 # lancache-dns-pfsense
 
-pfSense DNS server configuration generator for running a lancache
+pfSense DNS server configuration generator for running a lancache. Pulls the list of domains from `uklans/cache-domains`.
 
 ## Requirements
 
