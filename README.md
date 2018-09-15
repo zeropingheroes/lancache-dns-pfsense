@@ -24,4 +24,8 @@ Alternatively set the environment variables manually by running:
 
 ## Usage
 
-`sudo ./generate.sh`
+1. `sudo ./generate.sh`
+2. Copy the output from the console and paste into pfSense:
+   * Services > DNS Resolver > General Settings > Custom Options
+   
+The config is also available from `/tmp/lancache-dns-pfsense/lancache-dns-pfsense.conf`
