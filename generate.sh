@@ -45,7 +45,7 @@ do
     echo "# Configuration for $UPSTREAM" >> $CONFIG_FILE
 
     # Read the upstream file line by line
-    while read -r LINE;
+    while read -r LINE || [ -n "$LINE" ];
     do
         # Skip line if it is a comment
         if [[ ${LINE:0:1} == '#' ]]; then
