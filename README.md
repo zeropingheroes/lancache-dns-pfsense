@@ -22,6 +22,10 @@ Alternatively set the environment variables manually by running:
 
 `export VARIABLE=value`
 
+You can also use a comma to seperate multiple ip addresses, for example:
+
+`export LANCACHE_IP="192.168.1.1,192.168.1.2"`
+
 ## Usage
 
 1. `sudo ./generate.sh`
