@@ -26,6 +26,9 @@ fi
 # Check all required variables are set
 : "${LANCACHE_IP:?must be set}"
 
+# Put IP's into an array
+IFS=',' read -ra IP_ARRAY <<< "$LANCACHE_IP"
+
 # Get domains from `uklans/cache-domains` GitHub repo
 rm -rf /var/git/lancache-cache-domains
 /usr/bin/git clone https://github.com/uklans/cache-domains.git /var/git/lancache-cache-domains
@@ -62,8 +65,12 @@ do
             echo "local-zone: \"${LINE}.\" redirect" >> $CONFIG_FILE
         fi
 
-        # Add a standard A record config line
-        echo "local-data: \"${LINE}. A $LANCACHE_IP\"" >> $CONFIG_FILE
+        # Loop through all IP's to make A records
+        for IP in "${IP_ARRAY[@]}"
+        do
+            # Add a standard A record config line
+            echo "local-data: \"${LINE}. A $IP\"" >> $CONFIG_FILE
+        done
 
     done < /var/git/lancache-cache-domains/$UPSTREAM.txt
 
