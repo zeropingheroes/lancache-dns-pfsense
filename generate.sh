@@ -11,11 +11,6 @@ if [ -f $SCRIPT_DIR/.env ]; then
     source $SCRIPT_DIR/.env
 fi
 
-# If an IP is not set, use the machine's first IP
-if [ -z $LANCACHE_IP ]; then
-   export LANCACHE_IP=$(hostname -I | cut -d' ' -f1)
-fi
-
 # Check all required variables are set
 : "${LANCACHE_IP:?must be set}"
 
