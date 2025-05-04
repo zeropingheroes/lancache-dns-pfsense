@@ -14,6 +14,9 @@ fi
 # Check all required variables are set
 : "${LANCACHE_IP:?must be set}"
 
+# Read comma-separated list of IPs into array
+IFS=',' read -ra IP_ARRAY <<< "$LANCACHE_IP"
+
 # If no output file specified, set a default
 : "${OUTPUT_FILE:=unbound-lancache.conf}"
 
@@ -51,8 +54,11 @@ do
             echo "    local-zone: \"${LINE}.\" redirect" >> $OUTPUT_FILE
         fi
 
-        # Add a standard A record config line
-        echo "    local-data: \"${LINE}. A $LANCACHE_IP\"" >> $OUTPUT_FILE
+        # Create an A record for each IP
+        for IP in "${IP_ARRAY[@]}"
+        do
+            echo "local-data: \"${LINE}. A $IP\"" >> $OUTPUT_FILE
+        done
 
     done < cache-domains/$SERVICE.txt
 

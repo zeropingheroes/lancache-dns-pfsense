@@ -11,6 +11,10 @@ Thanks to [uklans.net](https://uklans.net/) for compiling and maintaining the li
 2. `cp .env.example .env`
 3. `nano .env`
 
+You can also use a comma to seperate multiple ip addresses, for example:
+
+`export LANCACHE_IP="192.168.1.1,192.168.1.2"`
+
 ## Usage
 Run `./generate.sh` to generate an unbound configuration file.
 
