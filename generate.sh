@@ -5,13 +5,6 @@ set -e
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# If script is executed as an unprivileged user
-# Execute it as superuser, preserving environment variables
-if [ $EUID != 0 ]; then
-    sudo -E "$0" "$@"
-    exit $?
-fi
-
 # If there is an .env file use it
 # to set the variables
 if [ -f $SCRIPT_DIR/.env ]; then
