@@ -1,31 +1,25 @@
-# lancache-dns-pfsense
+# lancache-dns-unbound
 
-pfSense DNS server configuration generator for running a lancache. Pulls the list of domains from `uklans/cache-domains`.
+Generate a configuration file for use with Unbound DNS server to redirect domains to
+a lancache.
 
-## Requirements
+Thanks to [uklans.net](https://uklans.net/) for compiling and maintaining the list of domains.
 
-- Ubuntu Server 16.04
-- pfSense 2.* using the "DNS Resolver" service
+## Setup
 
-## Installation
-
-1. `git clone https://github.com/zeropingheroes/lancache-dns-pfsense.git && cd lancache-dns-pfsense`
-
-## Configuration
-
-All configuration is done via environment variables:
-
-1. `cp .env.example .env`
-2. `nano .env`
-
-Alternatively set the environment variables manually by running:
-
-`export VARIABLE=value`
+1. `git clone https://github.com/zeropingheroes/lancache-dns-pfsense.git`
+2. `cp .env.example .env`
+3. `nano .env`
 
 ## Usage
+Run `./generate.sh` to generate an unbound configuration file.
 
-1. `sudo ./generate.sh`
-2. Copy the output from the console and paste into pfSense:
-   * Services > DNS Resolver > General Settings > Custom Options
-   
-The config is also available from `/tmp/lancache-dns-pfsense/lancache-dns-pfsense.conf`
+### Install config in OPNsense
+
+Copy the generated configuration file to `/usr/local/etc/unbound.opnsense.d/`
+
+### Install config in pfSense
+
+1. Navigate to **Services > DNS Resolver**
+2. Scroll down to **Custom Options**
+3. Paste in the contents of the generated file
