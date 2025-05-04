@@ -19,9 +19,9 @@ fi
 # Check all required variables are set
 : "${LANCACHE_IP:?must be set}"
 
-# Get domains from `uklans/cache-domains` GitHub repo
-rm -rf /var/git/lancache-cache-domains
-/usr/bin/git clone https://github.com/uklans/cache-domains.git /var/git/lancache-cache-domains
+echo "Getting domains from uklans/cache-domains"
+rm -rf cache-domains
+git clone git@github.com:uklans/cache-domains.git --depth 1
 
 # Set the upstreams we want to create unbound config files from
 declare -a UPSTREAMS=("blizzard" "origin" "riot" "steam" "windowsupdates")
@@ -58,7 +58,7 @@ do
         # Add a standard A record config line
         echo "local-data: \"${LINE}. A $LANCACHE_IP\"" >> $CONFIG_FILE
 
-    done < /var/git/lancache-cache-domains/$UPSTREAM.txt
+    done < cache-domains/$SERVICE.txt
 
 done
 
