@@ -1,2 +1,4 @@
 *.swp
 .env
+*.conf
+cache-domains

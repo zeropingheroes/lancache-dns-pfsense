@@ -5,47 +5,36 @@ set -e
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# If script is executed as an unprivileged user
-# Execute it as superuser, preserving environment variables
-if [ $EUID != 0 ]; then
-    sudo -E "$0" "$@"
-    exit $?
-fi
-
 # If there is an .env file use it
 # to set the variables
 if [ -f $SCRIPT_DIR/.env ]; then
     source $SCRIPT_DIR/.env
 fi
 
-# If an IP is not set, use the machine's first IP
-if [ -z $LANCACHE_IP ]; then
-   export LANCACHE_IP=$(hostname -I | cut -d' ' -f1)
-fi
-
 # Check all required variables are set
 : "${LANCACHE_IP:?must be set}"
 
-# Put IP's into an array
+# Read comma-separated list of IPs into array
 IFS=',' read -ra IP_ARRAY <<< "$LANCACHE_IP"
 
-# Get domains from `uklans/cache-domains` GitHub repo
-rm -rf /var/git/lancache-cache-domains
-/usr/bin/git clone https://github.com/uklans/cache-domains.git /var/git/lancache-cache-domains
+# If no output file specified, set a default
+: "${OUTPUT_FILE:=unbound-lancache.conf}"
 
-# Set the upstreams we want to create unbound config files from
-declare -a UPSTREAMS=("blizzard" "origin" "riot" "steam" "windowsupdates")
+echo "Getting domains from uklans/cache-domains"
+rm -rf cache-domains
+git clone git@github.com:uklans/cache-domains.git --depth 1
 
-# Create the config file
-mkdir -p /tmp/lancache-dns-pfsense
-CONFIG_FILE="/tmp/lancache-dns-pfsense/lancache-dns-pfsense.conf"
-echo "server:" > "$CONFIG_FILE"
+# Set the upstreams we want to create unbound configuration for
+declare -a SERVICES=("blizzard" "origin" "riot" "steam" "windowsupdates")
+
+echo "Generating config file"
+echo "server:" > "$OUTPUT_FILE"
 
 # Loop through each upstream file in turn
-for UPSTREAM in "${UPSTREAMS[@]}"
+for SERVICE in "${SERVICES[@]}"
 do
-    echo >> $CONFIG_FILE
-    echo "# Configuration for $UPSTREAM" >> $CONFIG_FILE
+    echo >> $OUTPUT_FILE
+    echo "    # $SERVICE domains" >> $OUTPUT_FILE
 
     # Read the upstream file line by line
     while read -r LINE || [ -n "$LINE" ];
@@ -62,25 +51,18 @@ do
             LINE=${LINE/#\*./}
 
             # Add a wildcard config line
-            echo "local-zone: \"${LINE}.\" redirect" >> $CONFIG_FILE
+            echo "    local-zone: \"${LINE}.\" redirect" >> $OUTPUT_FILE
         fi
 
-        # Loop through all IP's to make A records
+        # Create an A record for each IP
         for IP in "${IP_ARRAY[@]}"
         do
-            # Add a standard A record config line
-            echo "local-data: \"${LINE}. A $IP\"" >> $CONFIG_FILE
+            echo "local-data: \"${LINE}. A $IP\"" >> $OUTPUT_FILE
         done
 
-    done < /var/git/lancache-cache-domains/$UPSTREAM.txt
+    done < cache-domains/$SERVICE.txt
 
 done
 
-echo
-echo
-echo "Done!"
-echo "Paste the following into Services > DNS Resolver > Custom options in pfSense:"
-echo
-echo
-cat "$CONFIG_FILE"
-echo
+echo "Unbound configuration file written to"
+echo $OUTPUT_FILE
