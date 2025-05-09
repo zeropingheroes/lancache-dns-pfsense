@@ -57,7 +57,7 @@ do
         # Create an A record for each IP
         for IP in "${IP_ARRAY[@]}"
         do
-            echo "local-data: \"${LINE}. A $IP\"" >> $OUTPUT_FILE
+            echo "    local-data: \"${LINE}. A $IP\"" >> $OUTPUT_FILE
         done
 
     done < cache-domains/$SERVICE.txt
