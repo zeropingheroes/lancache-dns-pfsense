@@ -25,7 +25,7 @@ rm -rf cache-domains
 git clone git@github.com:uklans/cache-domains.git --depth 1
 
 # Set the upstreams we want to create unbound configuration for
-declare -a SERVICES=("blizzard" "riot" "steam" "windowsupdates")
+declare -a SERVICES=("blizzard" "epicgames" "riot" "steam" "windowsupdates")
 
 echo "Generating config file"
 echo "server:" > "$OUTPUT_FILE"
