@@ -20,7 +20,10 @@ Run `./generate.sh` to generate an unbound configuration file.
 
 ### Install config in OPNsense
 
-Copy the generated configuration file to `/usr/local/etc/unbound.opnsense.d/`
+1. Copy the generated configuration file to `/usr/local/etc/unbound.opnsense.d/`
+2. Restart unbound
+   1. From the web interface: **Services** > **Unbound DNS** > **General** > 🔄
+   2. From the terminal: `pluginctl -s unbound restart`
 
 ### Install config in pfSense
 
